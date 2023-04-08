@@ -20,7 +20,7 @@ const App = () => {
     setSearchText(searchText);
   };
   useEffect(() => {
-    if (searchText) {
+    if (searchText && page===1) {
       setIsLoading(isLoading => !isLoading);
 
       API.fetchImages(searchText, page)
