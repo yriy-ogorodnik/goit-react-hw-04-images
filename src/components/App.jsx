@@ -24,26 +24,23 @@ const App = () => {
       setIsLoading(isLoading => !isLoading);
 
       API.fetchImages(searchText, page)
-        .then(({ hits, totalHits }) => {
-          if (!images) {
-            setImages(hits);
-            toast.success('success');
-          }
-          setImages([...images, ...hits]);
+        .then(({ hits }) => {
+          setImages(hits);
+          toast.success('success');
         })
         .catch(error => toast.error(error.message))
         .finally(() => setIsLoading(isLoading => !isLoading));
     }
     //   // __________load more________
-    // if (page !== 1) {
-    //   setIsLoading(isLoading => !isLoading);
-    //   API.fetchImages(searchText, page)
-    //     .then(({ hits }) => {
-    //       setImages([...images, ...hits]);
-    //     })
-    //     .catch(err => toast.error(err.message))
-    //     .finally(() => setIsLoading(isLoading => !isLoading));
-    // }
+    if (page !== 1) {
+      setIsLoading(isLoading => !isLoading);
+      API.fetchImages(searchText, page)
+        .then(({ hits }) => {
+          setImages([...images, ...hits]);
+        })
+        .catch(err => toast.error(err.message))
+        .finally(() => setIsLoading(isLoading => !isLoading));
+    }
   }, [searchText, page]);
 
   const onNextFetch = () => {
