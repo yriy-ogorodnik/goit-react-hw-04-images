@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 export const ImageGallery = ({ images, openModal }) => (
   <ul className="gallery ImageGallery">
-    {images.map((image) => (
-      <ImageGalleryItem openModal={openModal} image={image} key={image.id} />
+    {images.map((image, index) => (
+      <ImageGalleryItem openModal={openModal} image={image} key={ index} />
     ))}
   </ul>
 );

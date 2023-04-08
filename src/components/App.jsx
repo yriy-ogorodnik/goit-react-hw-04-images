@@ -10,7 +10,6 @@ import Modal from 'components/Modal/Modal';
 const App = () => {
   const [searchText, setSearchText] = useState('');
   const [images, setImages] = useState(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
