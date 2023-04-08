@@ -45,7 +45,7 @@ const App = () => {
     //     .catch(err => toast.error(err.message))
     //     .finally(() => setIsLoading(isLoading => !isLoading));
     // }
-  }, [searchText, page, images]);
+  }, [searchText, page]);
 
   const onNextFetch = () => {
     setPage(page => page + 1);
