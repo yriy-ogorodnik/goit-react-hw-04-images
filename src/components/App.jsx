@@ -14,18 +14,39 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [currentImageUrl, setcurrentImageUrl] = useState(null);
+  const [totalHits, setTotalHits] = useState(0);
 
   // викликаємо по кліку на пошук. перезаписуємо стейт
-  const createSearchText = searchText => {
-    setSearchText(searchText);
+  const createSearchText = search => {
+    if (searchText === search) {
+      return;
+    }
+
+    setSearchText(search);
+    setPage(1);
+    setImages([]);
   };
 
   const getPhotos = async (searchText, page) => {
     setIsLoading(isLoading => !isLoading);
-    toast.success('success');
+    // toast.success('success');
     try {
-      const { hits } = await API.fetchImages(searchText, page);
-      setImages(prev => [...prev, ...hits]);
+      const { hits, totalHits } = await API.fetchImages(searchText, page);
+
+      if (totalHits === 0) {
+        toast.error(`There is no photos for ${searchText} query`);
+      } else {
+        setTotalHits(totalHits);
+      }
+
+      const imageArray = hits.map(hit => ({
+        id: hit.id,
+        description: hit.tags,
+        smallImage: hit.webformatURL,
+        largeImage: hit.largeImageURL,
+      }));
+
+      setImages(prev => [...prev, ...imageArray]);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -65,7 +86,9 @@ const App = () => {
       {isLoading && <Loader />}
 
       {images && <ImageGallery images={images} openModal={openModal} />}
-      {images.length >= 12 && <Button onNextFetch={onNextFetch} />}
+      {images.length >= 12 && images.length !== totalHits && (
+        <Button onNextFetch={onNextFetch} />
+      )}
       {showModal && (
         <Modal onClose={toggleModal} currentImageUrl={currentImageUrl} />
       )}

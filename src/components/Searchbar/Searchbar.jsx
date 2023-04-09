@@ -1,8 +1,8 @@
+import toast from 'react-hot-toast';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Searchbar = ({ createSearchText }) => {
-
   const [value, setValue] = useState('');
   const handlChange = ({ target: { value } }) => {
     setValue(value);
@@ -10,8 +10,12 @@ const Searchbar = ({ createSearchText }) => {
 
   const handlSubmit = e => {
     e.preventDefault();
+    if (value.trim() === '') {
+      toast.error('Fill in search query');
+      return;
+    }
     createSearchText(value);
-    // setValue('')
+    setValue('');
   };
 
   return (
@@ -37,7 +41,6 @@ const Searchbar = ({ createSearchText }) => {
 
 export default Searchbar;
 
-
 Searchbar.propTypes = {
-    createSearchText: PropTypes.func.isRequired,
-  };
+  createSearchText: PropTypes.func.isRequired,
+};
