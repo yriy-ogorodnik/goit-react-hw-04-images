@@ -9,7 +9,7 @@ import Modal from 'components/Modal/Modal';
 
 const App = () => {
   const [searchText, setSearchText] = useState('');
-  const [images, setImages] = useState(null);
+  const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -19,28 +19,26 @@ const App = () => {
   const createSearchText = searchText => {
     setSearchText(searchText);
   };
-  useEffect(() => {
-    if (searchText && page===1) {
-      setIsLoading(isLoading => !isLoading);
 
-      API.fetchImages(searchText, page)
-        .then(({ hits }) => {
-          setImages(hits);
-          toast.success('success');
-        })
-        .catch(error => toast.error(error.message))
-        .finally(() => setIsLoading(isLoading => !isLoading));
+  const getPhotos = async (searchText, page) => {
+    setIsLoading(isLoading => !isLoading);
+    toast.success('success');
+    try {
+      const { hits } = await API.fetchImages(searchText, page);
+      setImages(prev => [...prev, ...hits]);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
-    //   // __________load more________
-    if (page !== 1) {
-      setIsLoading(isLoading => !isLoading);
-      API.fetchImages(searchText, page)
-        .then(({ hits }) => {
-          setImages([...images, ...hits]);
-        })
-        .catch(err => toast.error(err.message))
-        .finally(() => setIsLoading(isLoading => !isLoading));
+  };
+
+  useEffect(() => {
+    if (!searchText && page === 1) {
+      return;
     }
+
+    getPhotos(searchText, page);
   }, [searchText, page]);
 
   const onNextFetch = () => {
@@ -67,7 +65,7 @@ const App = () => {
       {isLoading && <Loader />}
 
       {images && <ImageGallery images={images} openModal={openModal} />}
-      {images && <Button onNextFetch={onNextFetch} />}
+      {images.length >= 12 && <Button onNextFetch={onNextFetch} />}
       {showModal && (
         <Modal onClose={toggleModal} currentImageUrl={currentImageUrl} />
       )}
